@@ -32,7 +32,7 @@ uv run alembic upgrade head                       # apply migrations
 - `app/main.py` — `FastAPI` app; `lifespan` disposes the engine on shutdown; `/health` runs `SELECT 1`.
 - `alembic/env.py` — async template; takes the URL from `app.config.settings` (the `sqlalchemy.url` in `alembic.ini` is ignored) and uses `Base.metadata` for autogenerate. New models must be imported before `env.py` reads `Base.metadata`, or autogenerate won't see them.
 - `tests/conftest.py` — `client` fixture: `httpx.AsyncClient` over `ASGITransport` (no server, no lifespan), plus a session-scoped fixture that disposes the engine. Tests hit the real Compose Postgres; there is no separate test DB.
-- `docker-compose.yml` — `db` (postgres:16, healthcheck, volume `pgdata`) and `app` (behind profile `app`, `DATABASE_URL` points to host `db`). `Dockerfile` installs locked deps with uv, no dev group.
+- `docker-compose.yml` — `db` (postgres:16, healthcheck, volume `pgdata`) and `app` (behind profile `app`, `DATABASE_URL` points to host `db`). `Dockerfile` installs locked deps with uv, no dev group; the container runs `alembic upgrade head` before `exec uvicorn` (a failed migration stops startup). Setting `COMPOSE_PROFILES=app` in `.env` makes plain `docker compose up` start `app` too.
 
 Gotchas:
 - SQLAlchemy must be installed as `sqlalchemy[asyncio]` (needs `greenlet`).

@@ -26,6 +26,9 @@ curl localhost:8000/health              # {"status":"ok"}
 docker compose --profile app up -d --build
 ```
 
+Контейнер при старте сам выполняет `alembic upgrade head`, затем запускает uvicorn.
+Чтобы обычный `docker compose up` поднимал и приложение, добавьте в `.env` строку `COMPOSE_PROFILES=app`.
+
 ## Тесты и линтер
 
 Тестам нужна запущенная БД (`docker compose up -d db`).

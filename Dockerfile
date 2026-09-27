@@ -15,4 +15,5 @@ RUN uv sync --locked --no-dev --no-install-project
 COPY . .
 
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Сначала миграции; при ошибке uvicorn не стартует. exec делает uvicorn PID 1 — он получает SIGTERM
+CMD ["sh", "-c", "alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000"]
