@@ -1,6 +1,6 @@
 # ai-l2-assistant
 
-Каркас async-сервиса на FastAPI + Postgres (SQLAlchemy 2, Alembic). Пока есть только `GET /health`.
+Каркас async-сервиса на FastAPI + Postgres (SQLAlchemy 2, Alembic). Эндпоинты: `GET /health`, `POST /tickets`, `GET /tickets/{id}`.
 
 ## Требования
 
@@ -31,7 +31,7 @@ docker compose --profile app up -d --build
 
 ## Тесты и линтер
 
-Тестам нужна запущенная БД (`docker compose up -d db`).
+Тестам нужна запущенная БД (`docker compose up -d db`) с применёнными миграциями (`uv run alembic upgrade head`).
 
 ```bash
 uv run pytest
@@ -51,6 +51,9 @@ uv run alembic upgrade head
 app/config.py        настройки из env / .env
 app/db.py            Base, async engine, get_session
 app/main.py          FastAPI-приложение и /health
+app/models.py        модели SQLAlchemy (Ticket)
+app/schemas.py       Pydantic-схемы тикетов
+app/tickets.py       роутер /tickets
 alembic/             миграции
 tests/               pytest + httpx.AsyncClient
 docker-compose.yml   db (+ app под профилем "app")
